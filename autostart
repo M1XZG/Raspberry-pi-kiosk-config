@@ -1,0 +1,10 @@
+# This file should be called `autostart` and placed in `~/.config/lxsession/LXDE-pi/autostart`
+# This will configure the Pixel desktop to start and launch chromium using the `boot-kiosk.sh` script
+
+@lxpanel --profile LXDE
+@pcmanfm --desktop --profile LXDE
+@xset s off
+@xset -dpms
+@xset s noblank
+
+@~/bin/boot-kiosk.sh

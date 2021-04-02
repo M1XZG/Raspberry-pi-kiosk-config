@@ -1,0 +1,39 @@
+#!/bin/bash
+
+TASK=$1
+
+function sendurl()
+{
+        export DISPLAY=:0.0
+        # This will push the new URL to the open web browser
+        python -m webbrowser -t $1
+}
+
+case $TASK in
+        off)
+			# Power off the HDMI display - useful for cron scheduling / motion sensor triggering
+			/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+        ;;
+        on)
+			# Power on the HDMI display - useful for cron scheduling / motion sensor triggering
+			/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+        ;;
+        fb|dash|freeboard)
+			sendurl "https://MyDashboardURL.local/freeboard" > /dev/null 2>&1
+        ;;
+        op|octoprint)
+			sendurl "http://MyOctorprint.local" > /dev/null 2>&1
+        ;;
+        list)
+ 			echo
+			echo "fb / dash / freeboard - Home dashboard"
+			echo "op / octoprint        - Octoprint"
+			echo
+			echo "Enter any full URL to go there"
+			echo
+        ;;
+        *)
+			# Send any random URL provided on the command line
+			sendurl "${TASK}" > /dev/null 2>&1
+        ;;
+esac
