@@ -1,6 +1,6 @@
 *Work in progress*
 
-# Raspberry-pi-kiosk-config
+# Raspberry Pi 4 Kiosk Config
 
 How I configure a Raspberry Pi 4 in kiosk mode
 
