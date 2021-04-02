@@ -17,18 +17,18 @@ hdmi_mode=88
 
 ## Pixel Desktop Autostart
 
-The `autostart` script should be placed into the directory
+The [autostart](autostart) script should be placed into the directory
 
     mkdir -p ~/.config/lxsession/LXDE-pi/
     cp autostart ~/.config/lxsession/LXDE-pi/autostart
 
 ## Starting Chromium in Kiosk mode
 
-The `boot-kiosk.sh` script is called from the `autostart` script, it simply launches the chromium browser in `kiosk` mode to the URL provided in the script.
+The [boot-kiosk.sh](boot-kiosk.sh) script is called from the [autostart](autostart) script, it simply launches the chromium browser in `kiosk` mode to the URL provided in the script.
 
 # Controlling the Kiosk display
 
-The `kioskctl` script does a number of functions through a simple `case` statement. This script can be calld via cron or another script that prehaps is connected to motion sensor to power on the HDMI display or power it off when not require.
+The [kioskctl](kioskctl) script does a number of functions through a simple `case` statement. This script can be calld via cron or another script that prehaps is connected to motion sensor to power on the HDMI display or power it off when not require.
 
 This script also allows you to open preset URL's or just give it any URL you'd like to have opened in the browser.
 
