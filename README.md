@@ -40,7 +40,7 @@ Initially I mounted the Pi4 on the back of the monitor using the 4 mounting stud
 
 So, I decided to 3D print a small mounting plate to attach to the 4 studs, then on to this I would mount my Raspberry PI in it's [aluminum case](https://www.amazon.co.uk/gp/product/B081R54N7Z) using 3M velcro command strips (makes it easy to take off).
 
-The [STL file](3D-print-files/PI4 Mounting Plate v1.0.stl) was quick and simple solution.
+The [STL file](3D-print-files/PI4_Mounting_Plate_v1.0.stl) was quick and simple solution.
 
 Here are a couple of pics of the setup
 
