@@ -1,39 +1,106 @@
 #!/bin/bash
 
-TASK=$1
+# Set the path to your URL file, see the file for the format
+URLFILE=~/urls-kiosk.txt
+
+if [ "$1" = "" ];then
+	echo
+	echo "You didn't add any arguments. Try adding -help"
+	echo
+	exit 1
+else
+	USERARG=$1
+fi
 
 function sendurl()
 {
-        export DISPLAY=:0.0
-        # This will push the new URL to the open web browser
-        python -m webbrowser -t $1
+	export DISPLAY=:0.0
+	python -m webbrowser -t $1
 }
 
-case $TASK in
-        off)
-			# Power off the HDMI display - useful for cron scheduling / motion sensor triggering
-			/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
-        ;;
-        on)
-			# Power on the HDMI display - useful for cron scheduling / motion sensor triggering
-			/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
-        ;;
-        fb|dash|freeboard)
-			sendurl "https://MyDashboardURL.local/freeboard" > /dev/null 2>&1
-        ;;
-        op|octoprint)
-			sendurl "http://MyOctorprint.local" > /dev/null 2>&1
-        ;;
-        list)
- 			echo
-			echo "fb / dash / freeboard - Home dashboard"
-			echo "op / octoprint        - Octoprint"
-			echo
-			echo "Enter any full URL to go there"
-			echo
-        ;;
-        *)
-			# Send any random URL provided on the command line
-			sendurl "${TASK}" > /dev/null 2>&1
-        ;;
+function parseurlfile()
+{
+	RESULT=`grep -i "^${USERARG}" ${URLFILE} | awk -F, '{print $3}' `
+
+	echo "${RESULT}"
+}
+
+function listshortnames
+{
+
+	# Parse and print a list of entries in $URLFILE
+
+	echo
+	printf "%-3s %-20s %-40s %-40s \n" " " "Short Name" "Description" "URL"
+	printf "%-3s %-20s %-40s %-40s \n" " " "---------------" "-----------------------------------" "-----------------------------------------------------------------"
+	while IFS="," read -r rec_shortname rec_description rec_url
+	do
+		printf "%-3s %-20s %-40s %-40s \n" " " "${rec_shortname}" "${rec_description}" "${rec_url}"
+	done < <(cat ${URLFILE} | grep -v "#")
+	echo
+
+}
+
+case $USERARG in
+	off|Off|OFF)
+
+		# Turn off the screen
+
+		/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+	;;
+	on|On|ON)
+
+		# Turn on the screen
+		
+		/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+	;;
+	list|List|LIST)
+
+		# List all short names, parsing the $URLFILE
+
+		listshortnames
+	;;
+	help|Help|HELP|-help|--help)
+
+		# Show the help screen
+
+		echo
+		echo "There are 2 commands plus a list of short names you can use to control this script"
+		echo
+		printf "%-3s %-20s %-40s \n" " " "Command" "Description"
+		printf "%-3s %-20s %-40s \n" " " "---------------" "-----------------------------------"
+		printf "%-3s %-20s %-40s \n" " " "On" "This will turn ON the screen"
+		printf "%-3s %-20s %-40s \n" " " "Off" "This will turn OFF the screen"
+		printf "%-3s %-20s %-40s \n" " " "Help" "Prints this help screen"
+		echo
+		listshortnames
+	;;
+	*)
+		# If the contents of $USERARG start with `http` we will treat that as the URL to load to the display
+		# If there is no `http` present then we will assume it's a short name and load the URL found in $URLFILE
+
+		grep -q "^http" <<< ${USERARG}
+		_CHK="$?"
+		if [ ${_CHK} = 0 ]; then
+			# If $USERARG starts with `http` we just open that URL
+			sendurl "${USERARG}" > /dev/null 2>&1
+		else
+			grep -q "^${USERARG}," ${URLFILE}
+			_QUERY="$?"
+			# No URL detected in $USERARG, so taking this as a short name
+			if [ ${_QUERY} = 1 ]; then
+				echo
+				echo "No short name -- ${USERARG} -- found, here is the list of what I know about..."
+				echo
+				listshortnames
+				exit 255
+			else
+				while IFS="," read -r rec_shortname rec_description rec_url
+				do
+					sendurl "${rec_url}" > /dev/null 2>&1
+				done < <(cat ${URLFILE} | grep "^${USERARG},")	
+			fi
+		fi
+	;;
 esac
+
