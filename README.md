@@ -1,4 +1,4 @@
-*Work in progress*
+*Still a work in progress*
 
 # Raspberry Pi 4 Kiosk Config
 
