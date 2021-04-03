@@ -1,0 +1,5 @@
+#shortname,description,url
+#20 chars, 40 chars, Whatever
+bbc,BBC News,https://news.bbc.co.uk
+cnn,CNN News,https://edition.cnn.com/
+weather,Met Weather - Swindon,https://www.metoffice.gov.uk/weather/forecast/gcntr93j0
