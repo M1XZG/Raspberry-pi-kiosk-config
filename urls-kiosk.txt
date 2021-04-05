@@ -1,5 +1,6 @@
+# Whatever URL is listed at the top is the one the 'boot-kiosk.sh' script will use when starting up.
 #shortname,description,url
-#20 chars, 40 chars, Whatever
+#20 chars, 40 chars, Whatever length is needed
 bbc,BBC News,https://news.bbc.co.uk
 cnn,CNN News,https://edition.cnn.com/
 weather,Met Weather - Swindon,https://www.metoffice.gov.uk/weather/forecast/gcntr93j0

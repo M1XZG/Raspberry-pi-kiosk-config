@@ -7,4 +7,6 @@
 @xset -dpms
 @xset s noblank
 
-@~/bin/boot-kiosk.sh
+# Be sure to update the path below to your boot-kiosk.sh script
+# the default will be ~/kiosk/boot-kiosk.sh as this is where it'll be if following the README.md install instructions. 
+@~/kiosk/boot-kiosk.sh

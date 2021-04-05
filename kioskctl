@@ -1,7 +1,6 @@
 #!/bin/bash
-
-# Set the path to your URL file, see the file for the format
-URLFILE=./urls-kiosk.txt
+# Set the path to your `.kiosk.cfg` file
+. ~/.kiosk.cfg
 
 if [ "$1" = "" ];then
 	echo
@@ -9,7 +8,7 @@ if [ "$1" = "" ];then
 	echo
 	exit 1
 else
-	USERARG=$1
+	USERARG=`echo $1 | tr '[:upper:]' '[:lower:]'`
 fi
 
 function sendurl()
@@ -18,16 +17,8 @@ function sendurl()
 	python -m webbrowser -t $1
 }
 
-function parseurlfile()
-{
-	RESULT=`grep -i "^${USERARG}" ${URLFILE} | awk -F, '{print $3}' `
-
-	echo "${RESULT}"
-}
-
 function listshortnames
 {
-
 	# Parse and print a list of entries in $URLFILE
 
 	echo
@@ -38,32 +29,36 @@ function listshortnames
 		printf "%-3s %-20s %-40s %-40s \n" " " "${rec_shortname}" "${rec_description}" "${rec_url}"
 	done < <(cat ${URLFILE} | grep -v "#")
 	echo
-
 }
 
 case $USERARG in
-	off|Off|OFF)
+	refresh|reload|f5)
+		# If installed, xdotool will be called to refresh the browser page
+		XDO=`which xdotool`
 
+		if [ "${XDO}" = "" ];then
+			echo
+			echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
+			echo
+		else
+			export DISPLAY=:0.0
+			xdotool key ctrl+F5 &
+		fi
+	;;
+	off)
 		# Turn off the screen
-
 		/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
 	;;
-	on|On|ON)
-
+	on)
 		# Turn on the screen
-		
 		/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
 	;;
-	list|List|LIST)
-
+	list)
 		# List all short names, parsing the $URLFILE
-
 		listshortnames
 	;;
-	help|Help|HELP|-help|--help)
-
+	help|-help|--help)
 		# Show the help screen
-
 		echo
 		echo "There are 2 commands plus a list of short names you can use to control this script"
 		echo
@@ -71,6 +66,7 @@ case $USERARG in
 		printf "%-3s %-20s %-40s \n" " " "---------------" "-----------------------------------"
 		printf "%-3s %-20s %-40s \n" " " "On" "This will turn ON the screen"
 		printf "%-3s %-20s %-40s \n" " " "Off" "This will turn OFF the screen"
+		printf "%-3s %-20s %-40s \n" " " "Refresh" "Refreshes the browser"
 		printf "%-3s %-20s %-40s \n" " " "Help" "Prints this help screen"
 		echo
 		listshortnames
@@ -79,13 +75,13 @@ case $USERARG in
 		# If the contents of $USERARG start with `http` we will treat that as the URL to load to the display
 		# If there is no `http` present then we will assume it's a short name and load the URL found in $URLFILE
 
-		grep -q "^http" <<< ${USERARG}
+		grep -qi "^http" <<< ${USERARG}
 		_CHK="$?"
 		if [ ${_CHK} = 0 ]; then
 			# If $USERARG starts with `http` we just open that URL
 			sendurl "${USERARG}" > /dev/null 2>&1
 		else
-			grep -q "^${USERARG}," ${URLFILE}
+			grep -qi "^${USERARG}," ${URLFILE}
 			_QUERY="$?"
 			# No URL detected in $USERARG, so taking this as a short name
 			if [ ${_QUERY} = 1 ]; then
@@ -98,7 +94,7 @@ case $USERARG in
 				while IFS="," read -r rec_shortname rec_description rec_url
 				do
 					sendurl "${rec_url}" > /dev/null 2>&1
-				done < <(cat ${URLFILE} | grep "^${USERARG},")	
+				done < <(cat ${URLFILE} | grep -i "^${USERARG},")	
 			fi
 		fi
 	;;
