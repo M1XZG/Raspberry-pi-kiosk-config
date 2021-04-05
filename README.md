@@ -31,9 +31,10 @@ By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all 
 
     git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git ~/kiosk
     cd ~/kiosk
-    mkdir -p ~/.config/lxsession/
-    cp autostart ~/.config/lxsession/autostart
+    mkdir -p ~/.config/lxsession/LXDE-pi
+    cp autostart ~/.config/lxsession/LXDE-pi/autostart
     cp .kiosk.cfg ~/
+    chmod +x  ~/.config/lxsession/LXDE-pi/autostart ~/kiosk/boot-kiosk.sh ~/kiosk/kioskctl
 
 If you already have LXDE Desktop running, restart this by using
 
