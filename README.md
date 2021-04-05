@@ -19,6 +19,14 @@ hdmi_mode=88
 
 # Install these scripts
 
+Some packages you'll need to have installed for this to work, on top of LXDE and Chromium
+
+    unclutter
+    libcec4 
+    cec-utils
+    xdotool
+    xautomation
+
 By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `~/.kiosk.cfg`
 
     git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git ~/kiosk
