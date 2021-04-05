@@ -89,3 +89,5 @@ $ dd if=speedTestFile of=/dev/zero bs=20M count=5 oflag=dsync
 
 ----
 This is still a work in progress as I develop it for my needs. Feel free to use the scripts and such. 
+
+If you want to add to the scripts or have any corrections to the docs, please feel free to `fork` this repo and submit a `pull request` for review.
