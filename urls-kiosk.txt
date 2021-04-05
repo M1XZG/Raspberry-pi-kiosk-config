@@ -3,5 +3,5 @@
 #20 chars, 40 chars, Whatever length is needed
 bbc,BBC News,https://news.bbc.co.uk
 cnn,CNN News,https://edition.cnn.com/
-weather,Met Weather - Swindon,https://www.metoffice.gov.uk/weather/forecast/gcntr93j0
+weather,Met Weather - London,https://www.metoffice.gov.uk/weather/forecast/gcpvj0v07
 rcg,Random Comic Generator,https://explosm.net/rcg
