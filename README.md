@@ -31,6 +31,8 @@ If you already have LXDE Desktop running, restart this by using
 
     sudo service lightdm restart
 
+You may want to either add `~/kiosk` to your `$PATH` or symlink the `kioskctl` script to somewhere in your path to make it easier to run. 
+
 # Configure Pixel Desktop
 
 ## Pixel Desktop Autostart
