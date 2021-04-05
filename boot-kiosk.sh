@@ -17,9 +17,9 @@ do
     # then no refresh is performed, however this will still loop looking at the config file incase you update it with
     # a value, then the refresh will be performed on that time schedule.
 
-    REFRESH=`grep "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
+    REFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//' | tr '[:upper:]' '[:lower:]'`
 
-    if [ "${REFRESH}" = "NONE" ]; then
+    if [ "${REFRESH}" = "none" ]; then
         sleep 20
     else
         sleep ${REFRESH}

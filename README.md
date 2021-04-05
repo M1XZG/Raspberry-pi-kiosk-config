@@ -4,6 +4,8 @@
 
 How I configure a Raspberry Pi 4 in kiosk mode
 
+## Configure the Screen
+
 For my screen I'm using the [EVICIV 7 Inch Touchscreen](https://www.amazon.co.uk/gp/product/B07Q2LBWYK). This screen runs at 1024 x 600, this is not a standard size. Making this work is simple but google provides a lot of conflicting information.
 
 To get it working, edit `/boot/config.txt` and add these lines at the end, save and reboot.
@@ -15,22 +17,33 @@ hdmi_group=2
 hdmi_mode=88
 ```
 
+# Install these scripts
+
+By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `~/.kiosk.cfg`
+
+    git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git ~/kiosk
+    cd ~/.kiosk
+    mkdir -p ~/.config/lxsession/
+    cp autostart ~/.config/lxsession/autostart
+    cp .kiosk.cfg ~/
+
 # Configure Pixel Desktop
 
 ## Pixel Desktop Autostart
 
-The [autostart](autostart) script should be placed into the directory
-
-    mkdir -p ~/.config/lxsession/
-    cp autostart ~/.config/lxsession/autostart
+The [autostart](autostart) script will fire when the deskop launches, this will call the [boot-kiosk.sh](boot-kiosk.sh) script. This script will then load the first URL found in your [urls-kiosk.txt](urls-kiosk.txt) file and start chromium with this URL.
 
 ## Starting Chromium in Kiosk mode
 
-The [boot-kiosk.sh](boot-kiosk.sh) script is called from the [autostart](autostart) script, it simply launches the chromium browser in `kiosk` mode to the URL provided in the script.
+The [boot-kiosk.sh](boot-kiosk.sh) script is called from the [autostart](autostart) script, as mentioned above, the script finds the first URL in your list and loads this. 
+
+Once Chromium is loaded it will go into an indefinate loop refreshing the browser window based on the `REFRESH` variable set in the `.kiosk.cfg` file. One thing the script does is each time the loop runs it will recheck the `.kiosk.cfg` file incase you decide to change the refresh time frame on the fly (no restarts needed if you want to change it). If you wish to have no refresh just set the variable to `NONE` and the `boot-kiosk.sh` scrip will go into a 20 second loop checking the value but will never actually refresh the browser.
 
 # Controlling the Kiosk display
 
 The [kioskctl](kioskctl) script does a number of functions through a simple `case` statement. This script can be calld via cron or another script that prehaps is connected to motion sensor to power on the HDMI display or power it off when not require.
+
+For help on what the script can do, run `kioskctl -h`
 
 This script also allows you to open preset URL's or just give it any URL you'd like to have opened in the browser.
 
