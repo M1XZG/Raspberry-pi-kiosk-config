@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Be sure to set the path to your '.kiosk.cfg' file, by default it's looking to the users home directory
-CFG=~/.kiosk.cfg
+CFG=$HOME/.kiosk.cfg
 
 # Here we'll load the contents of the '.kiosk.cfg' file, allows us to keep variables consistant and reuable
 source ${CFG}

@@ -27,20 +27,20 @@ Some packages you'll need to have installed for this to work, on top of LXDE and
     xdotool
     xautomation
 
-By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `~/.kiosk.cfg`
+By default the `autostart` script will look for `$HOME/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `$HOME/.kiosk.cfg`
 
-    git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git ~/kiosk
-    cd ~/kiosk
-    mkdir -p ~/.config/lxsession/LXDE-pi
-    cp autostart ~/.config/lxsession/LXDE-pi/autostart
-    cp .kiosk.cfg ~/
-    chmod +x  ~/.config/lxsession/LXDE-pi/autostart ~/kiosk/boot-kiosk.sh ~/kiosk/kioskctl
+    git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git $HOME/kiosk
+    cd $HOME/kiosk
+    mkdir -p $HOME/.config/lxsession/LXDE-pi
+    cp autostart $HOME/.config/lxsession/LXDE-pi/autostart
+    cp .kiosk.cfg $HOME/
+    chmod +x  $HOME/.config/lxsession/LXDE-pi/autostart $HOME/kiosk/boot-kiosk.sh $HOME/kiosk/kioskctl
 
 If you already have LXDE Desktop running, restart this by using
 
     sudo service lightdm restart
 
-You may want to either add `~/kiosk` to your `$PATH` or symlink the `kioskctl` script to somewhere in your path to make it easier to run. 
+You may want to either add `$HOME/kiosk` to your `$PATH` or symlink the `kioskctl` script to somewhere in your path to make it easier to run. 
 
 # Configure Pixel Desktop
 

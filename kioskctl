@@ -1,6 +1,6 @@
 #!/bin/bash
 # Set the path to your `.kiosk.cfg` file
-. ~/.kiosk.cfg
+. $HOME/.kiosk.cfg
 
 if [ "$1" = "" ];then
 	echo
