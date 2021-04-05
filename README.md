@@ -38,7 +38,7 @@ By default the `autostart` script will look for `$HOME/kiosk/boot-kiosk.sh` and 
 
 ### Important info about autostart
 
-You must edit `$HOME/.config/lxsession/LXDE-pi/autostart` and set the path to `boot-kiosk.sh` to have the full path, this script will not use $HOME or `~` paths. It must be the full path, ie: /home/<user>/kiosk/boot-kiosk.sh
+You must edit `$HOME/.config/lxsession/LXDE-pi/autostart` and set the path to `boot-kiosk.sh` to have the full path, this script will not use $HOME or `~` paths. It must be the full path, ie: /home/USERNAME/kiosk/boot-kiosk.sh
 
 If you already have LXDE Desktop running, restart this by using
 
