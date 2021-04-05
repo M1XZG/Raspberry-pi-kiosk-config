@@ -22,7 +22,7 @@ hdmi_mode=88
 By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `~/.kiosk.cfg`
 
     git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git ~/kiosk
-    cd ~/.kiosk
+    cd ~/kiosk
     mkdir -p ~/.config/lxsession/
     cp autostart ~/.config/lxsession/autostart
     cp .kiosk.cfg ~/
