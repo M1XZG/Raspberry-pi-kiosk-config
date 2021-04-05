@@ -27,6 +27,10 @@ By default the `autostart` script will look for `~/kiosk/boot-kiosk.sh` and all 
     cp autostart ~/.config/lxsession/autostart
     cp .kiosk.cfg ~/
 
+If you already have LXDE Desktop running, restart this by using
+
+    sudo service lightdm restart
+
 # Configure Pixel Desktop
 
 ## Pixel Desktop Autostart
