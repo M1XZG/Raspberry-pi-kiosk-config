@@ -19,7 +19,7 @@ do
 
     REFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//' | tr '[:upper:]' '[:lower:]'`
 
-    if [ "${REFRESH}" = "none" ]; then
+    if [ "${REFRESH}" = "none" ] || [ "${REFRESH}" = "0" ]; then
         sleep 20
     else
         sleep ${REFRESH}
