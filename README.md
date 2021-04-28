@@ -1,5 +1,17 @@
 *Still a work in progress*
 
+# Table of contents
+- [Raspberry Pi 4 Kiosk Config](#raspberry-pi-4-kiosk-config)
+  * [Configure the Screen](#configure-the-screen)
+- [Install these scripts](#install-these-scripts)
+    + [Important info about autostart](#important-info-about-autostart)
+- [Configure Pixel Desktop](#configure-pixel-desktop)
+  * [Pixel Desktop Autostart](#pixel-desktop-autostart)
+  * [Starting Chromium in Kiosk mode](#starting-chromium-in-kiosk-mode)
+- [Controlling the Kiosk display](#controlling-the-kiosk-display)
+- [Extra stuff](#extra-stuff)
+
+
 # Raspberry Pi 4 Kiosk Config
 
 How I configure a Raspberry Pi 4 in kiosk mode
