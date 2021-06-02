@@ -6,24 +6,39 @@ CFG=$HOME/.kiosk.cfg
 # Here we'll load the contents of the '.kiosk.cfg' file, allows us to keep variables consistant and reuable
 source ${CFG}
 
-# Get the first URL from our URLFILE and open it initially
-URL=`cat ${URLFILE} | grep -v "#" | head -1 | awk -F, '{print $3}'`
+# If the old run file is left over, clear it out so we can create a new one. This file is used to track
+# which URL we're displaying and what the refresh schedule is for that page.
+if [ !f ${RUNFILE} ] ;then
+    rm -f ${RUNFILE}
+fi
 
-/usr/bin/chromium-browser ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
+function refreshloop()
+{
+    while true; #create an infinite loop to refresh
+    do
+        # This creates a loop to initiate refreshes of the browser window. If in 'kiosk.cfg' you have REFRESH set to NONE
+        # then no refresh is performed, however this will still loop looking at the config file incase you update it with
+        # a value, then the refresh will be performed on that time schedule.
 
-while true; #create an infinite loop to refresh
-do
-    # This creates a loop to initiate refreshes of the browser window. If in 'kiosk.cfg' you have REFRESH set to NONE
-    # then no refresh is performed, however this will still loop looking at the config file incase you update it with
-    # a value, then the refresh will be performed on that time schedule.
+        REFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
 
-    REFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//' | tr '[:upper:]' '[:lower:]'`
+        if [ "${REFRESH}" = "0" ]; then
+            sleep 20
+        else
+            sleep ${REFRESH}
+            # This sends the CTRL+F5 keystroke to the foreground app, hopefully it's your browser.
+            xdotool key ctrl+F5 & #you need to have xdotools installed
+        fi
+    done
+}
 
-    if [ "${REFRESH}" = "none" ] || [ "${REFRESH}" = "0" ]; then
-        sleep 20
-    else
-        sleep ${REFRESH}
-        # This sends the CTRL+F5 keystroke to the foreground app, hopefully it's your browser.
-        xdotool key ctrl+F5 & #you need to have xdotools installed
-    fi
-done
+function startbrowser()
+{
+    # Get the first URL from our URLFILE and open it initially
+    URL=`cat ${URLFILE} | grep -v "#" | head -1 | awk -F, '{print $3}'`
+
+    /usr/bin/chromium-browser ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
+}
+
+startbrowser
+refreshloop

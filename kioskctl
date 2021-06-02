@@ -33,16 +33,28 @@ function listshortnames
 
 case $USERARG in
 	refresh|reload|f5)
-		# If installed, xdotool will be called to refresh the browser page
-		XDO=`which xdotool`
 
-		if [ "${XDO}" = "" ];then
-			echo
-			echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
-			echo
+		if [ "$2" = "" ]; then
+
+			# If installed, xdotool will be called to refresh the browser page
+			XDO=`which xdotool`
+
+			if [ "${XDO}" = "" ];then
+				echo
+				echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
+				echo
+			else
+				export DISPLAY=:0.0
+				xdotool key ctrl+F5 &
+			fi
 		else
-			export DISPLAY=:0.0
-			xdotool key ctrl+F5 &
+			# Setting new refresh rate
+			CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
+			NEWREFRESH=$2
+			sed -ie.bak "s/^REFRESH=.*/REFRESH=${NEWREFRESH}/g" ~/.kiosk.cfg
+			echo
+			echo "Changed REFRESH from ${CURRENTREFRESH} seconds to ${NEWREFRESH} seconds"
+			echo
 		fi
 	;;
 	off)
