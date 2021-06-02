@@ -1,7 +1,9 @@
 #!/bin/bash
 # Set the path to your `.kiosk.cfg` file
 CFG=$HOME/.kiosk.cfg
-. ${CFG}
+
+# Here we'll load the contents of the '.kiosk.cfg' file, allows us to keep variables consistant and reuable
+source ${CFG}
 
 CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
 
@@ -61,7 +63,7 @@ case $USERARG in
 			echo
 			echo "Changed REFRESH from ${CURRENTREFRESH} seconds to ${NEWREFRESH} seconds"
 			echo
-			kill -HUP `ps -ef | grep boot-kiosk.sh | grep -v grep | awk '{print $2}'`
+			kill -HUP `cat ${RUNFILE}`
 		fi
 	;;
 	off)

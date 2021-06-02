@@ -12,6 +12,8 @@ if [ !f ${RUNFILE} ] ;then
     rm -f ${RUNFILE}
 fi
 
+echo ${BASHPID} > ${RUNFILE}
+
 function refreshloop()
 {
     while true; #create an infinite loop to refresh
