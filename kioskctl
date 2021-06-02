@@ -34,22 +34,26 @@ function listshortnames
 	echo
 }
 
+refresh-now()
+{
+	# If installed, xdotool will be called to refresh the browser page
+	XDO=`which xdotool`
+
+	if [ "${XDO}" = "" ];then
+		echo
+		echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
+		echo
+	else
+		export DISPLAY=:0.0
+		xdotool key ctrl+F5 &
+	fi
+}
+
 case $USERARG in
 	refresh|reload|f5)
 
 		if [ "$2" = "" ]; then
-
-			# If installed, xdotool will be called to refresh the browser page
-			XDO=`which xdotool`
-
-			if [ "${XDO}" = "" ];then
-				echo
-				echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
-				echo
-			else
-				export DISPLAY=:0.0
-				xdotool key ctrl+F5 &
-			fi
+			refresh-now
 		else
 			# Setting new refresh rate
 			NEWREFRESH=$2
@@ -57,6 +61,7 @@ case $USERARG in
 			echo
 			echo "Changed REFRESH from ${CURRENTREFRESH} seconds to ${NEWREFRESH} seconds"
 			echo
+			kill -HUP `ps -ef | grep boot-kiosk.sh | grep -v grep | awk '{print $2}'`
 		fi
 	;;
 	off)
