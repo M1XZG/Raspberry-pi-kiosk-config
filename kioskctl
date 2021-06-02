@@ -1,6 +1,9 @@
 #!/bin/bash
 # Set the path to your `.kiosk.cfg` file
-. $HOME/.kiosk.cfg
+CFG=$HOME/.kiosk.cfg
+. ${CFG}
+
+CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
 
 if [ "$1" = "" ];then
 	echo
@@ -33,16 +36,27 @@ function listshortnames
 
 case $USERARG in
 	refresh|reload|f5)
-		# If installed, xdotool will be called to refresh the browser page
-		XDO=`which xdotool`
 
-		if [ "${XDO}" = "" ];then
-			echo
-			echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
-			echo
+		if [ "$2" = "" ]; then
+
+			# If installed, xdotool will be called to refresh the browser page
+			XDO=`which xdotool`
+
+			if [ "${XDO}" = "" ];then
+				echo
+				echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
+				echo
+			else
+				export DISPLAY=:0.0
+				xdotool key ctrl+F5 &
+			fi
 		else
-			export DISPLAY=:0.0
-			xdotool key ctrl+F5 &
+			# Setting new refresh rate
+			NEWREFRESH=$2
+			sed -ie.bak "s/^REFRESH=.*/REFRESH=${NEWREFRESH}/g" ${CFG}
+			echo
+			echo "Changed REFRESH from ${CURRENTREFRESH} seconds to ${NEWREFRESH} seconds"
+			echo
 		fi
 	;;
 	off)
@@ -67,6 +81,7 @@ case $USERARG in
 		printf "%-3s %-20s %-40s \n" " " "On" "This will turn ON the screen"
 		printf "%-3s %-20s %-40s \n" " " "Off" "This will turn OFF the screen"
 		printf "%-3s %-20s %-40s \n" " " "Refresh" "Refreshes the browser"
+		printf "%-3s %-20s %-40s \n" " " "Refresh ###" "Provide a number to change refresh time period (Current refresh rate: ${CURRENTREFRESH})"
 		printf "%-3s %-20s %-40s \n" " " "Help" "Prints this help screen"
 		echo
 		listshortnames
@@ -100,3 +115,4 @@ case $USERARG in
 	;;
 esac
 
+#end
