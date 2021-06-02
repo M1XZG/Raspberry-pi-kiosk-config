@@ -49,7 +49,7 @@ case $USERARG in
 			fi
 		else
 			# Setting new refresh rate
-			CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
+			CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//' ~/.kiosk.cfg`
 			NEWREFRESH=$2
 			sed -ie.bak "s/^REFRESH=.*/REFRESH=${NEWREFRESH}/g" ~/.kiosk.cfg
 			echo
