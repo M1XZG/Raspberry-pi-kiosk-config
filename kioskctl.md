@@ -30,4 +30,4 @@ There are 2 commands plus a list of short names you can use to control this scri
     rcg                  Random Comic Generator                   https://explosm.net/rcg              
 ```
 
-[back to README.md](README.md)
+[back to README.md](https://github.com/M1XZG/Raspberry-pi-kiosk-config)
