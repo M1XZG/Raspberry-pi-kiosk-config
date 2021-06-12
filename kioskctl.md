@@ -9,7 +9,7 @@ The options are pretty self-explanatory. Options are `not` case sensitive.
 4. The URLS are also not case sensitive. When adding new ones observe the simple CSV format of the file. 
 
 ```
-$ ./kioskctl --help                                                                                                         [15:03:09]
+$ ./kioskctl --help 
 
 There are 2 commands plus a list of short names you can use to control this script
 
