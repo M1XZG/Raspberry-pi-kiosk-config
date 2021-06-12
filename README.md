@@ -74,7 +74,7 @@ Once Chromium is loaded it will go into an indefinate loop refreshing the browse
 
 The [kioskctl](kioskctl) script does a number of functions through a simple `case` statement. This script can be calld via cron or another script that prehaps is connected to motion sensor to power on the HDMI display or power it off when not require.
 
-For help on what the script can do, run `kioskctl -h`
+For help on what the script can do, run `kioskctl -h` - see the [kioskctl docs](kioskctl.md).
 
 This script also allows you to open preset URL's or just give it any URL you'd like to have opened in the browser.
 
