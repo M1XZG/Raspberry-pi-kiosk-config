@@ -1,4 +1,12 @@
+The options are pretty self-explanatory. Options are `not` case sensitive.
 
+1. `Off` & `On` simply control the HDMI screen using the `vcgencmd display_power X` command, `X` represents a `0` or `1` for `off` and `on` respectively.
+
+2. The `Refresh` option used without any number will simply force a refresh of the displayed page in the browser.
+
+3. Using `Refresh ###` where `###` is the number of seconds between automated refreshes (`0` - no refreshes), this will also update your `.kiosk.cfg` file with the new refresh number. This also means that the new number will persist between reboots and restarts of the Windowed environment.
+
+4. The URLS are also not case sensitive. When adding new ones observe the simple CSV format of the file. 
 
 ```
 $ ./kioskctl --help                                                                                                         [15:03:09]
