@@ -29,3 +29,5 @@ There are 2 commands plus a list of short names you can use to control this scri
     weather              Met Weather - London                     https://www.metoffice.gov.uk/weather/forecast/gcpvj0v07 
     rcg                  Random Comic Generator                   https://explosm.net/rcg              
 ```
+
+[back to README.md](README.md)
