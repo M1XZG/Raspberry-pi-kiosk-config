@@ -4,4 +4,5 @@
 bbc,BBC News,https://news.bbc.co.uk
 cnn,CNN News,https://edition.cnn.com/
 weather,Met Weather - London,https://www.metoffice.gov.uk/weather/forecast/gcpvj0v07
+natgrid,UK National Power Grid,https://grid.iamkate.com/
 rcg,Random Comic Generator,https://explosm.net/rcg
