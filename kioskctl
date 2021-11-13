@@ -114,6 +114,10 @@ case $USERARG in
 		printf "%-3s %-20s %-40s \n" " " "---------------" "-----------------------------------"
 		printf "%-3s %-20s %-40s \n" " " "On" "This will turn ON the screen"
 		printf "%-3s %-20s %-40s \n" " " "Off" "This will turn OFF the screen"
+		printf "%-3s %-20s %-40s \n" " " "" "Screen power override can be made by creating a file called \`.powermode\` in your home directory."
+		printf "%-3s %-20s %-40s \n" " " "" "If the first line is just \`stayon\` or \`stayoff\` then the above cmds will respect this file."
+		printf "%-3s %-20s %-40s \n" " " "" "If the file \`.powermode\` doesn't exist then off / on commands work as expected."
+		echo
 		printf "%-3s %-20s %-40s \n" " " "Refresh" "Refreshes the browser"
 		printf "%-3s %-20s %-40s \n" " " "Refresh ###" "Provide a number to change refresh time period (Current refresh rate: ${CURRENTREFRESH})"
 		printf "%-3s %-20s %-40s \n" " " "Help" "Prints this help screen"
