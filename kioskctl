@@ -36,6 +36,31 @@ function listshortnames
 	echo
 }
 
+function screenpower()
+{
+	if [ -f ${PWRMODE} ]; then
+		PWR=`cat ${PWRMODE}`
+	else
+		PWR=""
+	fi
+
+	if [ "$1" = "off" ];then
+		if [ "${PWR}" = "stayon" ];then
+			echo "Powermode Override is set to: STAY ON"
+			exit 0
+		else # [ "${PWR}" = "" ];then
+			/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+		fi
+	elif [ "$1" = "on" ];then
+		if [ "${PWR}" = "stayoff" ];then
+			echo "Powermode Override is set to: STAY OFF"
+			exit 0
+		else # [ "${PWR}" = "" ];then
+			/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+		fi
+	fi
+}
+
 refresh-now()
 {
 	# If installed, xdotool will be called to refresh the browser page
@@ -68,11 +93,13 @@ case $USERARG in
 	;;
 	off)
 		# Turn off the screen
-		/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+		screenpower off
+		#/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
 	;;
 	on)
 		# Turn on the screen
-		/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+		screenpower on
+		#/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
 	;;
 	list)
 		# List all short names, parsing the $URLFILE
