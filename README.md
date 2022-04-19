@@ -29,7 +29,7 @@ hdmi_group=2
 hdmi_mode=88
 ```
 
-# Install these scripts
+# Installation
 
 Some packages you'll need to have installed for this to work, on top of LXDE and Chromium
 
@@ -38,6 +38,10 @@ Some packages you'll need to have installed for this to work, on top of LXDE and
     cec-utils
     xdotool
     xautomation
+
+```
+sudo apt -y install unclutter libcec4 cec-utils xdotool xautomation
+```
 
 By default the `autostart` script will look for `$HOME/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `$HOME/.kiosk.cfg`
 
