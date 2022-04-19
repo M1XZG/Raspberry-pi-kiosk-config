@@ -33,11 +33,11 @@ hdmi_mode=88
 
 Some packages you'll need to have installed for this to work, on top of LXDE and Chromium
 
-    unclutter
-    libcec4 
-    cec-utils
-    xdotool
-    xautomation
+- unclutter
+- libcec4 
+- cec-utils
+- xdotool
+- xautomation
 
 ```
 sudo apt -y install unclutter libcec4 cec-utils xdotool xautomation
