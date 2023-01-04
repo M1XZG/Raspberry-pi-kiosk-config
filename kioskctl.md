@@ -17,8 +17,12 @@ There are 2 commands plus a list of short names you can use to control this scri
     ---------------      -----------------------------------      
     On                   This will turn ON the screen             
     Off                  This will turn OFF the screen            
+                         Screen power override can be made by creating a file called `.powermode` in your home directory. 
+                         If the first line is just `stayon` or `stayoff` then the above cmds will respect this file. 
+                         If the file `.powermode` doesn't exist then off / on commands work as expected. 
+
     Refresh              Refreshes the browser                    
-    Refresh ###          Provide a number to change refresh time period (Current refresh rate: 600) 
+    Refresh ###          Provide a number to change refresh time period (Current refresh rate: 120) 
     Help                 Prints this help screen                  
 
 
@@ -27,7 +31,8 @@ There are 2 commands plus a list of short names you can use to control this scri
     bbc                  BBC News                                 https://news.bbc.co.uk                   
     cnn                  CNN News                                 https://edition.cnn.com/                 
     weather              Met Weather - London                     https://www.metoffice.gov.uk/weather/forecast/gcpvj0v07 
-    rcg                  Random Comic Generator                   https://explosm.net/rcg              
+    natgrid              UK National Power Grid                   https://grid.iamkate.com/                
+    rcg                  Random Comic Generator                   https://explosm.net/rcg                  
 ```
 
 [back to README.md](https://github.com/M1XZG/Raspberry-pi-kiosk-config)
