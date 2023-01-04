@@ -39,7 +39,7 @@ function startbrowser()
     # Get the first URL from our URLFILE and open it initially
     URL=`cat ${URLFILE} | grep -v "#" | head -1 | awk -F, '{print $3}'`
 
-    /usr/bin/chromium-browser ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
+    ${BROWSER} ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
 }
 
 startbrowser
