@@ -42,5 +42,12 @@ function startbrowser()
     ${BROWSER} ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
 }
 
+function startwebui()
+{
+    # Start up the simple webui
+    ${WEBUI} >> /tmp/web-ui.log
+}
+
 startbrowser
+startwebui
 refreshloop
