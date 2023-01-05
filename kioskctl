@@ -20,6 +20,11 @@ function sendurl()
 {
 	export DISPLAY=:0.0
 	python -m webbrowser -t $1
+
+	# These steps will close the previous tab that was being displayed. This is needed as over time the open tabs will get out of control.
+	sleep 3
+	xdotool key --clearmodifiers ctrl+Page_Up
+	xdotool key --clearmodifiers ctrl+w
 }
 
 function listshortnames
