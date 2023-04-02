@@ -12,6 +12,13 @@ class MenuHandler(http.server.BaseHTTPRequestHandler):
 
     # Display menu
     self.wfile.write(b'<html><body>')
+    self.wfile.write(b'<h1>Kiosk Menu - Controls</h1>')
+    self.wfile.write(b'<ul>')
+    self.wfile.write(b'<li><a href="/k_pwr_on">Power on the screen</a></li>')
+    self.wfile.write(b'<li><a href="/k_pwr_off">Power off the screen</a></li>')
+    self.wfile.write(b'<li><a href="/k_refresh">Force screen refresh</a></li>')
+    #self.wfile.write(b'<li><a href="/k_refresh_set">Set refresh time</a></li>')
+    self.wfile.write(b'</ul>')
     self.wfile.write(b'<h1>Kiosk Menu - Which would you like to display?</h1>')
     self.wfile.write(b'<ul>')
     self.wfile.write(b'<li><a href="/k_dash">Home Dashboard</a></li>')
@@ -27,7 +34,51 @@ class MenuHandler(http.server.BaseHTTPRequestHandler):
     self.wfile.write(b'</body></html>')
 
     # Handle menu item selection
-    #
+    ##############################################################################
+    # Controls
+    ##############################################################################
+    if self.path == '/k_pwr_on':
+      os.system('kioskctl on')
+      self.wfile.write(b'<p>Turned on the display</p>')
+    if self.path == '/k_pwr_off':
+      os.system('kioskctl off')
+      self.wfile.write(b'<p>Turned off the display</p>')
+    if self.path == '/k_refresh':
+      os.system('kioskctl refresh')
+      self.wfile.write(b'<p>Refreshing the screen</p>')
+
+    ##############################################################################
+    # Broken code somewhere here. WebUI fails to return but does execute command
+    ##############################################################################
+    # Refresh set time
+    if self.path == '/k_refresh_set':
+      # Ask user for number
+      self.wfile.write(b'<form action="/k_refresh_set" method="POST">')
+      self.wfile.write(b'<label>How many seconds between refreshes?:</label><br>')
+      self.wfile.write(b'<input type="text" name="number"><br>')
+      self.wfile.write(b'<input type="submit" value="Submit">')
+      self.wfile.write(b'</form>')
+
+    def do_POST(self):
+      # Get number from user
+      content_length = int(self.headers['Content-Length'])
+      body = self.rfile.read(content_length)
+      number = int(body.decode().split('=')[1])
+  
+      # Run command with number as argument
+      command = 'kioskctl refresh {}'.format(number)
+      os.system(command)
+      #elf.wfile.write(b'<p>Ran command with number {}</p>'.format(str(number).encode()))
+  
+      # Display return to main menu button
+      self.wfile.write(b'<form action="/" method="GET">')
+      self.wfile.write(b'<input type="submit" value="Return to main menu">')
+      self.wfile.write(b'</form>')
+
+
+    ##############################################################################
+    # Display destinations
+    ##############################################################################
     # Launch home  dashboard
     if self.path == '/k_dash':
       os.system('kioskctl dash')

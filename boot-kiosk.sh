@@ -16,6 +16,8 @@ echo ${BASHPID} > ${RUNFILE}
 
 function refreshloop()
 {
+    echo ${BASHPID} > ${RUNFILE}
+
     while true; #create an infinite loop to refresh
     do
         # This creates a loop to initiate refreshes of the browser window. If in 'kiosk.cfg' you have REFRESH set to NONE
@@ -32,6 +34,8 @@ function refreshloop()
             xdotool key ctrl+F5 & #you need to have xdotools installed
         fi
     done
+
+    echo ${BASHPID} > ${RUNFILE}
 }
 
 function startbrowser()
@@ -40,12 +44,16 @@ function startbrowser()
     URL=`cat ${URLFILE} | grep -v "#" | head -1 | awk -F, '{print $3}'`
 
     ${BROWSER} ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
+
+    echo ${BASHPID} > ${RUNFILE}
 }
 
 function startwebui()
 {
     # Start up the simple webui
     ${WEBUI} >> /tmp/web-ui.log
+
+    echo ${BASHPID} > ${RUNFILE}
 }
 
 startbrowser
