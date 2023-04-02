@@ -110,7 +110,7 @@ case $USERARG in
 		# List all short names, parsing the $URLFILE
 		listshortnames
 	;;
-	help|-help|--help)
+	help|-help|--help|-h)
 		# Show the help screen
 		echo
 		echo "There are 2 commands plus a list of short names you can use to control this script"
