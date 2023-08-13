@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# This code is not ready for production use. It is a proof of concept only.
+# The displayed menu is entire hard coded and not dynamic. If you know how to make
+# it dynamic, please let me know.
+
 import os
 import http.server
 import socketserver
