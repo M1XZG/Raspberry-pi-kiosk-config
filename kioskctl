@@ -33,16 +33,22 @@ else
     USER_COMMAND=$(echo "$1" | tr '[:upper:]' '[:lower:]')
 fi
 
-# Navigate to URL in the current browser tab using xdotool
-# This focuses the address bar, types the URL, and presses Enter
+# Navigate to URL by opening in new tab and closing the old one
+# This prevents tab accumulation in kiosk mode
 send_url() {
     export DISPLAY=:0.0
-    # Use Ctrl+L to focus the address bar, type URL, and press Enter
-    xdotool key ctrl+l
+    # Open new tab
+    xdotool key ctrl+t
     sleep 0.3
+    # Type URL in the new tab
     xdotool type "$1"
     sleep 0.2
     xdotool key Return
+    sleep 0.5
+    # Switch to the first tab (the old one) and close it
+    xdotool key ctrl+1
+    sleep 0.2
+    xdotool key ctrl+w
 }
 
 # Display all available URL shortcuts from the configuration file
