@@ -1,46 +1,72 @@
 #!/bin/bash
 
-# Be sure to set the path to your '.kiosk.cfg' file, by default it's looking to the users home directory
-CFG=$HOME/.kiosk.cfg
+# Configuration file path - required for this script to function
+CFG="$HOME/.kiosk.cfg"
 
-# Here we'll load the contents of the '.kiosk.cfg' file, allows us to keep variables consistant and reuable
-source ${CFG}
-
-# If the old run file is left over, clear it out so we can create a new one. This file is used to track
-# which URL we're displaying and what the refresh schedule is for that page.
-if [ !f ${RUNFILE} ] ;then
-    rm -f ${RUNFILE}
+# Validate that config file exists before attempting to source it
+if [[ ! -f "${CFG}" ]]; then
+    echo "ERROR: Configuration file not found at ${CFG}" >&2
+    echo "Please copy .kiosk.cfg to your home directory" >&2
+    exit 1
 fi
 
-echo ${BASHPID} > ${RUNFILE}
+# Source the configuration file to load all variables
+source "${CFG}"
 
-function refreshloop()
-{
-    while true; #create an infinite loop to refresh
-    do
-        # This creates a loop to initiate refreshes of the browser window. If in 'kiosk.cfg' you have REFRESH set to NONE
-        # then no refresh is performed, however this will still loop looking at the config file incase you update it with
-        # a value, then the refresh will be performed on that time schedule.
+# Verify required variables are set after sourcing config
+if [[ -z "${RUNFILE}" ]] || [[ -z "${URLFILE}" ]] || [[ -z "${BROWSER}" ]]; then
+    echo "ERROR: Required configuration variables not set in ${CFG}" >&2
+    exit 1
+fi
 
-        REFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
+# Clean up old run file if it exists and create a new one
+# This file tracks which URL is displaying and the refresh schedule
+if [[ -f "${RUNFILE}" ]]; then
+    rm -f "${RUNFILE}"
+fi
 
-        if [ "${REFRESH}" = "0" ]; then
+echo "${BASHPID}" > "${RUNFILE}"
+
+# Infinite loop that refreshes the browser based on the REFRESH config setting
+# This function re-reads the config file on each iteration, allowing runtime changes without restart
+refresh_loop() {
+    while :; do
+        # Re-read REFRESH setting from config file each iteration
+        # This allows changing refresh interval without restarting the script
+        REFRESH=$(grep -i "^REFRESH=" "${CFG}" | sed 's/^REFRESH=//')
+
+        # If REFRESH is 0 or NONE, just wait without actually refreshing
+        if [[ "${REFRESH}" = "0" ]] || [[ "${REFRESH}" = "NONE" ]]; then
             sleep 20
         else
-            sleep ${REFRESH}
-            # This sends the CTRL+F5 keystroke to the foreground app, hopefully it's your browser.
-            xdotool key ctrl+F5 & #you need to have xdotools installed
+            sleep "${REFRESH}"
+            # Send Ctrl+F5 to refresh the browser window
+            xdotool key ctrl+F5 &
         fi
     done
 }
 
-function startbrowser()
-{
-    # Get the first URL from our URLFILE and open it initially
-    URL=`cat ${URLFILE} | grep -v "#" | head -1 | awk -F, '{print $3}'`
-
-    ${BROWSER} ${URL} --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
+# Start the browser with the first URL from the configuration
+start_browser() {
+    # Validate URLFILE exists
+    if [[ ! -f "${URLFILE}" ]]; then
+        echo "ERROR: URL file not found at ${URLFILE}" >&2
+        exit 1
+    fi
+    
+    # Extract the first non-comment URL from the file (3rd field, comma-separated)
+    local URL
+    URL=$(grep -v "^#" "${URLFILE}" | head -1 | awk -F, '{print $3}')
+    
+    if [[ -z "${URL}" ]]; then
+        echo "ERROR: No valid URLs found in ${URLFILE}" >&2
+        exit 1
+    fi
+    
+    # Start browser with kiosk mode flags
+    "${BROWSER}" "${URL}" --kiosk --noerrdialogs --disable-session-crashed-bubble --disable-infobars &
 }
 
-startbrowser
-refreshloop
+# Execute startup sequence
+start_browser
+refresh_loop

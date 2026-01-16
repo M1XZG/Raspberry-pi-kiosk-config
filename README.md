@@ -1,3 +1,13 @@
+### Quick Start Installation
+
+```bash
+git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git $HOME/kiosk
+cd $HOME/kiosk
+mkdir -p $HOME/.config/lxsession/LXDE-pi
+cp autostart $HOME/.config/lxsession/LXDE-pi/autostart
+cp .kiosk.cfg $HOME/
+chmod +x $HOME/.config/lxsession/LXDE-pi/autostart $HOME/kiosk/boot-kiosk.sh $HOME/kiosk/kioskctl
+```
 *Still a work in progress*
 
 # Table of contents
@@ -45,12 +55,7 @@ sudo apt -y install unclutter libcec4 cec-utils xdotool xautomation
 
 By default the `autostart` script will look for `$HOME/kiosk/boot-kiosk.sh` and all the scripts will look for the config file as `$HOME/.kiosk.cfg`
 
-    git clone https://github.com/M1XZG/Raspberry-pi-kiosk-config.git $HOME/kiosk
-    cd $HOME/kiosk
-    mkdir -p $HOME/.config/lxsession/LXDE-pi
-    cp autostart $HOME/.config/lxsession/LXDE-pi/autostart
-    cp .kiosk.cfg $HOME/
-    chmod +x  $HOME/.config/lxsession/LXDE-pi/autostart $HOME/kiosk/boot-kiosk.sh $HOME/kiosk/kioskctl
+  # The previous installation commands are now included in the Quick Start Installation section.
 
 ### Important info about autostart
 

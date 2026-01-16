@@ -1,114 +1,139 @@
 #!/bin/bash
-# Set the path to your `.kiosk.cfg` file
-CFG=$HOME/.kiosk.cfg
+# Kiosk control script - manages display power, URL navigation, and browser refresh for kiosk mode
 
-# Here we'll load the contents of the '.kiosk.cfg' file, allows us to keep variables consistant and reuable
-source ${CFG}
+# Configuration file path
+CFG="$HOME/.kiosk.cfg"
 
-CURRENTREFRESH=`grep -i "^REFRESH=" ${CFG} | sed 's/^REFRESH=//'`
-
-if [ "$1" = "" ];then
-	echo
-	echo "You didn't add any arguments. Try adding -help"
-	echo
-	exit 1
-else
-	USERARG=`echo $1 | tr '[:upper:]' '[:lower:]'`
+# Validate configuration file exists before sourcing
+if [[ ! -f "${CFG}" ]]; then
+    echo "ERROR: Configuration file not found at ${CFG}" >&2
+    echo "Please copy .kiosk.cfg to your home directory" >&2
+    exit 1
 fi
 
-function sendurl()
-{
-	export DISPLAY=:0.0
-	python -m webbrowser -t $1
+# Source configuration file
+source "${CFG}"
 
-	# These steps will close the previous tab that was being displayed. This is needed as over time the open tabs will get out of control.
-	sleep 3
-	xdotool key --clearmodifiers ctrl+Page_Up
-	xdotool key --clearmodifiers ctrl+w
+# Verify required variables are set
+if [[ -z "${URLFILE}" ]] || [[ -z "${RUNFILE}" ]] || [[ -z "${PWRMODE}" ]]; then
+    echo "ERROR: Required configuration variables not set in ${CFG}" >&2
+    exit 1
+fi
+
+# Get current refresh setting
+CURRENT_REFRESH=$(grep -i "^REFRESH=" "${CFG}" | sed 's/^REFRESH=//')
+
+# Parse command-line argument
+if [[ -z "$1" ]]; then
+    echo
+    echo "You didn't add any arguments. Try adding -help"
+    echo
+    exit 1
+else
+    USER_COMMAND=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+fi
+
+# Navigate to URL in the current browser tab using xdotool
+# This focuses the address bar, types the URL, and presses Enter
+send_url() {
+    export DISPLAY=:0.0
+    # Use Ctrl+L to focus the address bar, type URL, and press Enter
+    xdotool key ctrl+l
+    sleep 0.3
+    xdotool type "$1"
+    sleep 0.2
+    xdotool key Return
 }
 
-function listshortnames
-{
-	# Parse and print a list of entries in $URLFILE
-
-	echo
-	printf "%-3s %-20s %-40s %-40s \n" " " "Short Name" "Description" "URL"
-	printf "%-3s %-20s %-40s %-40s \n" " " "---------------" "-----------------------------------" "-----------------------------------------------------------------"
-	while IFS="," read -r rec_shortname rec_description rec_url
-	do
-		printf "%-3s %-20s %-40s %-40s \n" " " "${rec_shortname}" "${rec_description}" "${rec_url}"
-	done < <(cat ${URLFILE} | grep -v "#")
-	echo
+# Display all available URL shortcuts from the configuration file
+# Format: Short Name | Description | URL
+list_shortnames() {
+    echo
+    printf "%-3s %-20s %-40s %-40s \n" " " "Short Name" "Description" "URL"
+    printf "%-3s %-20s %-40s %-40s \n" " " "---------------" "-----------------------------------" "-----------------------------------------------------------------"
+    while IFS="," read -r shortname description url; do
+        printf "%-3s %-20s %-40s %-40s \n" " " "${shortname}" "${description}" "${url}"
+    done < <(grep -v "#" "${URLFILE}")
+    echo
 }
 
-function screenpower()
-{
-	if [ -f ${PWRMODE} ]; then
-		PWR=`cat ${PWRMODE}`
-	else
-		PWR=""
-	fi
+# Control HDMI display power output with override capability
+# Can be overridden by .powermode file in home directory
+screen_power() {
+    local power_mode=""
+    if [[ -f "${PWRMODE}" ]]; then
+        power_mode=$(cat "${PWRMODE}")
+    fi
 
-	if [ "$1" = "off" ];then
-		if [ "${PWR}" = "stayon" ];then
-			echo "Powermode Override is set to: STAY ON"
-			exit 0
-		else # [ "${PWR}" = "" ];then
-			/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
-		fi
-	elif [ "$1" = "on" ];then
-		if [ "${PWR}" = "stayoff" ];then
-			echo "Powermode Override is set to: STAY OFF"
-			exit 0
-		else # [ "${PWR}" = "" ];then
-			/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
-		fi
-	fi
+    if [[ "$1" == "off" ]]; then
+        if [[ "${power_mode}" == "stayon" ]]; then
+            echo "Powermode Override is set to: STAY ON"
+            exit 0
+        else
+            /usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+        fi
+    elif [[ "$1" == "on" ]]; then
+        if [[ "${power_mode}" == "stayoff" ]]; then
+            echo "Powermode Override is set to: STAY OFF"
+            exit 0
+        else
+            /usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+        fi
+    fi
 }
 
-refresh-now()
-{
-	# If installed, xdotool will be called to refresh the browser page
-	XDO=`which xdotool`
+# Refresh the browser immediately using Ctrl+F5 if xdotool is available
+refresh_now() {
+    local xdotool_path
+    xdotool_path=$(which xdotool)
 
-	if [ "${XDO}" = "" ];then
-		echo
-		echo "I can't find 'xdotool', please install it: sudo apt-get -y install xdotool"
-		echo
-	else
-		export DISPLAY=:0.0
-		xdotool key ctrl+F5 &
-	fi
+    if [[ -z "${xdotool_path}" ]]; then
+        echo
+        echo "ERROR: 'xdotool' not found - please install it:"
+        echo "  sudo apt-get -y install xdotool"
+        echo
+        return 1
+    else
+        export DISPLAY=:0.0
+        xdotool key ctrl+F5 &
+    fi
 }
 
-case $USERARG in
+case "${USER_COMMAND}" in
 	refresh|reload|f5)
-
-		if [ "$2" = "" ]; then
-			refresh-now
+		if [[ -z "$2" ]]; then
+			refresh_now
 		else
-			# Setting new refresh rate
-			NEWREFRESH=$2
-			sed -ie.bak "s/^REFRESH=.*/REFRESH=${NEWREFRESH}/g" ${CFG}
+			# Set new refresh rate in config file
+			local new_refresh="$2"
+			if [[ -z "${RUNFILE}" ]] || [[ ! -f "${RUNFILE}" ]]; then
+				echo "ERROR: Cannot find PID file ${RUNFILE}" >&2
+				exit 1
+			fi
+			sed -i.bak "s/^REFRESH=.*/REFRESH=${new_refresh}/g" "${CFG}"
 			echo
-			echo "Changed REFRESH from ${CURRENTREFRESH} seconds to ${NEWREFRESH} seconds"
+			echo "Changed REFRESH from ${CURRENT_REFRESH} seconds to ${new_refresh} seconds"
 			echo
-			kill -HUP `cat ${RUNFILE}`
+			local pid
+			pid=$(cat "${RUNFILE}")
+			if [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null; then
+				kill -HUP "${pid}" 2>/dev/null || true
+			else
+				echo "Warning: Could not signal kiosk process"
+			fi
 		fi
 	;;
 	off)
-		# Turn off the screen
-		screenpower off
-		#/usr/bin/vcgencmd display_power 0 > /dev/null 2>&1
+		# Turn off the HDMI display
+		screen_power off
 	;;
 	on)
-		# Turn on the screen
-		screenpower on
-		#/usr/bin/vcgencmd display_power 1 > /dev/null 2>&1
+		# Turn on the HDMI display
+		screen_power on
 	;;
 	list)
-		# List all short names, parsing the $URLFILE
-		listshortnames
+		# List all available URL shortcuts
+		list_shortnames
 	;;
 	help|-help|--help|-h)
 		# Show the help screen
@@ -124,35 +149,39 @@ case $USERARG in
 		printf "%-3s %-20s %-40s \n" " " "" "If the file \`.powermode\` doesn't exist then off / on commands work as expected."
 		echo
 		printf "%-3s %-20s %-40s \n" " " "Refresh" "Refreshes the browser"
-		printf "%-3s %-20s %-40s \n" " " "Refresh ###" "Provide a number to change refresh time period (Current refresh rate: ${CURRENTREFRESH})"
+		printf "%-3s %-20s %-40s \n" " " "Refresh ###" "Provide a number to change refresh time period (Current refresh rate: ${CURRENT_REFRESH})"
 		printf "%-3s %-20s %-40s \n" " " "Help" "Prints this help screen"
 		echo
-		listshortnames
+		list_shortnames
 	;;
 	*)
-		# If the contents of $USERARG start with `http` we will treat that as the URL to load to the display
-		# If there is no `http` present then we will assume it's a short name and load the URL found in $URLFILE
+		# Handle URL shortcuts or direct URL input
+		# If argument starts with 'http', treat as direct URL
+		# Otherwise, look up in URLFILE by shortname
 
-		grep -qi "^http" <<< ${USERARG}
-		_CHK="$?"
-		if [ ${_CHK} = 0 ]; then
-			# If $USERARG starts with `http` we just open that URL
-			sendurl "${USERARG}" > /dev/null 2>&1
+		if [[ "${USER_COMMAND}" =~ ^https?:// ]]; then
+			# Direct URL provided - navigate to it
+			send_url "${USER_COMMAND}" > /dev/null 2>&1
 		else
-			grep -qi "^${USERARG}," ${URLFILE}
-			_QUERY="$?"
-			# No URL detected in $USERARG, so taking this as a short name
-			if [ ${_QUERY} = 1 ]; then
+			# Check if URLFILE exists
+			if [[ ! -f "${URLFILE}" ]]; then
+				echo "ERROR: URL file not found at ${URLFILE}" >&2
+				exit 1
+			fi
+
+			# Look up shortname in URLFILE
+			if ! grep -qi "^${USER_COMMAND}," "${URLFILE}"; then
 				echo
-				echo "No short name -- ${USERARG} -- found, here is the list of what I know about..."
+				echo "Unknown shortname: ${USER_COMMAND}"
+				echo "Here are the available shortcuts:"
 				echo
-				listshortnames
+				list_shortnames
 				exit 255
 			else
-				while IFS="," read -r rec_shortname rec_description rec_url
-				do
-					sendurl "${rec_url}" > /dev/null 2>&1
-				done < <(cat ${URLFILE} | grep -i "^${USERARG},")	
+				# Extract and navigate to URL for matched shortname
+				while IFS="," read -r shortname description url; do
+					send_url "${url}" > /dev/null 2>&1
+				done < <(grep -i "^${USER_COMMAND}," "${URLFILE}")
 			fi
 		fi
 	;;
