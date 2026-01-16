@@ -19,12 +19,19 @@ fi
 function sendurl()
 {
 	export DISPLAY=:0.0
-	python -m webbrowser -t $1
+	# Use xdotool to navigate Firefox to the new URL in the current tab
+	# Focus the address bar with Ctrl+L, type the URL, and press Enter
+	xdotool key ctrl+l
+	sleep 0.3
+	xdotool type "$1"
+	sleep 0.2
+	xdotool key Return
+}
 
-	# These steps will close the previous tab that was being displayed. This is needed as over time the open tabs will get out of control.
-	sleep 3
-	xdotool key --clearmodifiers ctrl+Page_Up
-	xdotool key --clearmodifiers ctrl+w
+function sendurlfresh()
+{
+	export DISPLAY=:0.0
+	python -m webbrowser -t $1
 }
 
 function listshortnames
