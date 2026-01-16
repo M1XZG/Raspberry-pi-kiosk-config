@@ -19,16 +19,13 @@ fi
 function sendurl()
 {
 	export DISPLAY=:0.0
-	# Use xdotool to navigate Firefox to the new URL
+	# Use xdotool to navigate Firefox to the new URL in the current tab
 	# Focus the address bar with Ctrl+L, type the URL, and press Enter
 	xdotool key ctrl+l
 	sleep 0.3
 	xdotool type "$1"
 	sleep 0.2
 	xdotool key Return
-	sleep 1
-	# Close the previous tab that was being displayed. This is needed as over time the open tabs will get out of control.
-	xdotool key ctrl+w
 }
 
 function sendurlfresh()
